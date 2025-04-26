@@ -5,6 +5,9 @@ from classifier.components.model_trainer import (
 from classifier.components.many_models_type_model_trainer import (
     ManyModelsTypeModelTrainer,
 )
+from classifier.components.many_models_and_batch_size_type_model_trainer import (
+    ManyModelsAndBatchSizeTypeModelTrainer,
+)
 from classifier import logger
 from classifier.components.monitor_plotter import (
     MonitorPlotter,
@@ -26,6 +29,8 @@ class ModelTrainerPipeline:
         model_trainer = None
         if model_trainer_config.model_training_type == "m":
             model_trainer = ManyModelsTypeModelTrainer(model_trainer_config)
+        elif model_trainer_config.model_training_type == "mb":
+            model_trainer = ManyModelsAndBatchSizeTypeModelTrainer(model_trainer_config)
         else:
             model_trainer = ModelTrainer(model_trainer_config)
 

@@ -15,8 +15,8 @@ data_transformation:
 
 # MODEL TRAINING  
 model_trainer: 
-      model_name: model5   
-      model_training_type: m  # rcv: randomisedcv, gcv: gridcv, r: randomisedTrainVal, g: gridTrainVal, m: many models
+      model_name: model6   
+      model_training_type: m  # rcv: randomisedcv, gcv: gridcv, r: randomisedTrainVal, g: gridTrainVal, m: many models, mb: many models + batch_size
 
       # Cần cho model_training_type = rcv, gcv, r, g
       base_model: XGBClassifier(random_state=42)
@@ -32,9 +32,14 @@ model_trainer:
 
       # Càn cho model_training_type = m
       models: 
+            - XGBClassifier(n_estimators=400, max_depth=30, reg_alpha=10, reg_lambda=10)
+            - XGBClassifier(n_estimators=400, max_depth=30, reg_alpha=20, reg_lambda=20)
+            - XGBClassifier(n_estimators=400, max_depth=30, reg_alpha=30, reg_lambda=30)
+
+      # Cần cho model_training_type = mb 
+      models_mb: 
             - XGBClassifier(n_estimators=400, max_depth=30, reg_alpha=1, reg_lambda=5)
-            - XGBClassifier(n_estimators=400, max_depth=30, reg_alpha=5, reg_lambda=5)
-            - XGBClassifier(n_estimators=400, max_depth=30, reg_alpha=5, reg_lambda=10)
+      batch_size: 100000
                   
 # MODEL EVALUATION
 model_evaluation: 

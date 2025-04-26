@@ -63,6 +63,10 @@ class ModelTrainerConfig:
     # params to train many models
     models: list
 
+    # params to train many models + batch_size
+    models_mb: list
+    batch_size: int
+
     # common params
     scoring: str
     target_score: float
