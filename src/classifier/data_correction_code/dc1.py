@@ -16,7 +16,7 @@ import re
 from sklearn.impute import SimpleImputer
 
 
-class DC1:
+class DC:
     def __init__(self):
         pass
 
@@ -118,7 +118,7 @@ class DC1:
         return df
 
 
-FEATURE_ORDINAL_DICT_DC1 = {
+FEATURE_ORDINAL_DICT = {
     "Smoker_bin": [0, 1],
     "Diabetes_bin": [0, 1],
     "Hypertension_bin": [0, 1],
