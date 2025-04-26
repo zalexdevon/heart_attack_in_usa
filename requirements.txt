@@ -12,5 +12,6 @@ seaborn
 xgboost
 lightgbm 
 imbalanced-learn
-zzzz_mylib_23_4==0.30
+scipy
+zzzz_mylib_23_4==0.31
 -e .
