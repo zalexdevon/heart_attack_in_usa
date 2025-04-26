@@ -166,6 +166,7 @@ class ManyModelsAndBatchSizeTypeModelTrainer:
                 model_desc = f"{model_desc} ***************"
             self.best_model_results_text += f"{model_desc}\n-> train scoring: {train_scoring}, val scoring: {val_scoring}\n\n"
 
+        self.best_model_results_text += f"batch size: {self.config.batch_size}\n"
         self.best_model_results_text += (
             f"Thời gian chạy trung bình cho 1 model: {self.true_average_train_time}\n"
         )
