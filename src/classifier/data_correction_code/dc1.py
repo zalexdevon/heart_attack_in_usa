@@ -16,18 +16,6 @@ import re
 from sklearn.impute import SimpleImputer
 
 
-# Chuỗi nào có PM thì giá trị giờ cộng thêm 12 phút
-def process_time(gold_time: str):
-    if gold_time.endswith("PM"):
-        parts = gold_time.split(":")
-        hour = int(parts[0]) + 12
-        gold_time = f"{hour}:{parts[1]}"
-
-    res = re.split("(AM|PM)", gold_time)[0].strip()
-    res = res.split(":")[0]
-    return res
-
-
 class DC1:
     def __init__(self):
         pass
@@ -36,53 +24,43 @@ class DC1:
         # Xóa các cột không cần thiết
         df = df.drop(
             columns=[
-                "country",
-                "location_name",
-                "latitude",
-                "longitude",
-                "timezone",
-                "last_updated_epoch",
-                "last_updated",
-                "temperature_celsius",
-                "temperature_fahrenheit",
-                "condition_text",
-                "wind_mph",
-                "wind_direction",
-                "pressure_mb",
-                "precip_mm",
-                "precip_in",
-                "feels_like_celsius",
-                "feels_like_fahrenheit",
-                "visibility_miles",
-                "gust_mph",
-                "air_quality_us-epa-index",
-                "air_quality_gb-defra-index",
+                "Ethnicity",
+                "EmploymentStatus",
+                "MaritalStatus",
             ]
         )
 
         #  Đổi tên cột
         rename_dict = {
-            "wind_kph": "wind_kph_num",
-            "wind_degree": "wind_degree_num",
-            "pressure_in": "pressure_in_num",
-            "humidity": "humidity_num",
-            "cloud": "cloud_num",
-            "visibility_km": "visibility_km_num",
-            "uv_index": "uv_index_num",
-            "gust_kph": "gust_kph_num",
-            "air_quality_Carbon_Monoxide": "air_quality_Carbon_Monoxide_num",
-            "air_quality_Ozone": "air_quality_Ozone_num",
-            "air_quality_Nitrogen_dioxide": "air_quality_Nitrogen_dioxide_num",
-            "air_quality_Sulphur_dioxide": "air_quality_Sulphur_dioxide_num",
-            "air_quality_PM2.5": "air_quality_PM2_5_num",
-            "air_quality_PM10": "air_quality_PM10_num",
-            "sunrise": "sunrise_ord",
-            "sunset": "sunset_ord",
-            "moonrise": "moonrise_ord",
-            "moonset": "moonset_ord",
-            "moon_phase": "moon_phase_nom",
-            "moon_illumination": "moon_illumination_num",
-            "temp_bin": "temp_bin_target",
+            "Age": "Age_num",
+            "Gender": "Gender_nom",
+            "Cholesterol": "Cholesterol_num",
+            "BloodPressure": "BloodPressure_num",
+            "HeartRate": "HeartRate_num",
+            "BMI": "BMI_num",
+            "Smoker": "Smoker_bin",
+            "Diabetes": "Diabetes_bin",
+            "Hypertension": "Hypertension_bin",
+            "FamilyHistory": "FamilyHistory_bin",
+            "PhysicalActivity": "PhysicalActivity_numcat",
+            "AlcoholConsumption": "AlcoholConsumption_numcat",
+            "Diet": "Diet_ord",
+            "StressLevel": "StressLevel_numcat",
+            "Income": "Income_num",
+            "EducationLevel": "EducationLevel_ord",
+            "Medication": "Medication_bin",
+            "ChestPainType": "ChestPainType_nom",
+            "ECGResults": "ECGResults_nom",
+            "MaxHeartRate": "MaxHeartRate_num",
+            "ST_Depression": "ST_Depression_num",
+            "ExerciseInducedAngina": "ExerciseInducedAngina_bin",
+            "Slope": "Slope_nom",
+            "NumberOfMajorVessels": "NumberOfMajorVessels_numcat",
+            "Thalassemia": "Thalassemia_nom",
+            "PreviousHeartAttack": "PreviousHeartAttack_bin",
+            "StrokeHistory": "StrokeHistory_bin",
+            "Residence": "Residence_nom",
+            "Outcome": "Outcome_target",
         }
 
         df = df.rename(columns=rename_dict)
@@ -106,34 +84,6 @@ class DC1:
             + ordinal_cols
             + [target_col]
         ]
-
-        # Kiểm tra nội dung các cột `ordinal`
-        ## Biển đổi 4 cột sunrise_ord, sunset_ord, moonrise_ord, moonset_ord
-        format = r"\d+:\d+\s*(AM|PM)"
-
-        df_ordinal_cols = df[ordinal_cols]
-        index_not_satisfy_format = (
-            df_ordinal_cols[
-                df_ordinal_cols.applymap(
-                    lambda item: re.fullmatch(format, item) is None
-                )
-            ]
-            .stack()
-            .index
-        )
-
-        df_ordinal_cols_happen_stack = df_ordinal_cols.stack()
-        df_ordinal_cols_happen_stack = df_ordinal_cols_happen_stack[
-            ~df_ordinal_cols_happen_stack.index.isin(index_not_satisfy_format)
-        ]
-        df_ordinal_cols_happen_stack = df_ordinal_cols_happen_stack.apply(
-            lambda item: process_time(item)
-        )
-        df_ordinal_cols_stack = df_ordinal_cols.stack()
-        df_ordinal_cols_stack[df_ordinal_cols_happen_stack.index] = (
-            df_ordinal_cols_happen_stack
-        )
-        df[ordinal_cols] = df_ordinal_cols_stack.unstack()
 
         # Xử lí missing value
         if data_type == "train":
@@ -169,60 +119,14 @@ class DC1:
 
 
 FEATURE_ORDINAL_DICT_DC1 = {
-    "sunrise_ord": ["02", "03", "04", "05", "06", "07", "08", "09", "10", "11"],
-    "sunset_ord": ["12", "14", "15", "16", "17", "18", "19", "20", "21", "22", "23"],
-    "moonrise_ord": [
-        "No moonrise",
-        "01",
-        "02",
-        "03",
-        "04",
-        "05",
-        "06",
-        "07",
-        "08",
-        "09",
-        "10",
-        "11",
-        "12",
-        "13",
-        "14",
-        "15",
-        "16",
-        "17",
-        "18",
-        "19",
-        "20",
-        "21",
-        "22",
-        "23",
-        "24",
-    ],
-    "moonset_ord": [
-        "No moonset",
-        "01",
-        "02",
-        "03",
-        "04",
-        "05",
-        "06",
-        "07",
-        "08",
-        "09",
-        "10",
-        "11",
-        "12",
-        "13",
-        "14",
-        "15",
-        "16",
-        "17",
-        "18",
-        "19",
-        "20",
-        "21",
-        "22",
-        "23",
-        "24",
-    ],
+    "Smoker_bin": [0, 1],
+    "Diabetes_bin": [0, 1],
+    "Hypertension_bin": [0, 1],
+    "FamilyHistory_bin": [0, 1],
+    "Medication_bin": ["No", "Yes"],
+    "ExerciseInducedAngina_bin": ["No", "Yes"],
+    "PreviousHeartAttack_bin": [0, 1],
+    "StrokeHistory_bin": [0, 1],
+    "Diet_ord": ["Unhealthy", "Moderate", "Healthy"],
+    "EducationLevel_ord": ["High School", "College", "Postgraduate"],
 }
