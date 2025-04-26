@@ -15,7 +15,7 @@ data_transformation:
 
 # MODEL TRAINING  
 model_trainer: 
-      model_name: model7    
+      model_name: model8    
       model_training_type: m  # rcv: randomisedcv, gcv: gridcv, r: randomisedTrainVal, g: gridTrainVal, m: many models, mb: many models + batch_size
 
       # Cần cho model_training_type = rcv, gcv, r, g
@@ -32,8 +32,9 @@ model_trainer:
 
       # Càn cho model_training_type = m
       models: 
-            - XGBClassifier(n_estimators=400, max_depth=30, reg_alpha=10, reg_lambda=10, learning_rate=0.01, subsample=0.5, colsample_bytree=0.5)
-            - XGBClassifier(n_estimators=400, max_depth=30, reg_alpha=10, reg_lambda=10, learning_rate=0.1, subsample=0.5, colsample_bytree=0.5)
+            - XGBClassifier(n_estimators=400, max_depth=30, reg_alpha=10, reg_lambda=10, learning_rate=0.01)
+            - XGBClassifier(n_estimators=400, max_depth=30, reg_alpha=10, reg_lambda=10, learning_rate=0.1)
+            - XGBClassifier(n_estimators=400, max_depth=30, reg_alpha=10, reg_lambda=10, learning_rate=1)
 
       # Cần cho model_training_type = mb 
       models_mb: 
