@@ -37,7 +37,7 @@ class ManyModelsAndBatchSizeTypeModelTrainer:
         # Load models
         self.models = [
             stringToObjectConverter.convert_complex_MLmodel_yaml_to_object(model)
-            for model in self.config.models_mb
+            for model in self.config.models
         ]
 
         self.num_models = len(self.models)
