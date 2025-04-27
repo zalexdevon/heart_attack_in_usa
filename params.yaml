@@ -34,8 +34,7 @@ model_trainer:
 
       # Càn cho model_training_type = m
       models: 
-            - XGBClassifier(warm_start=True, n_estimators=200, max_depth=30, reg_alpha=1, reg_lambda=1,  learning_rate = 0.01)
-            - XGBClassifier(warm_start=True, n_estimators=200, max_depth=30, reg_alpha=5, reg_lambda=5, learning_rate = 0.01)
+            - MLPClassifier(warm_start=True,hidden_layer_sizes=(64,32,16), activation='relu', max_iter=100, batch_size=1024, validation_fraction=0.1, early_stopping=True)
 
                   
 # MODEL EVALUATION
