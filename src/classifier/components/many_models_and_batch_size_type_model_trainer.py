@@ -45,6 +45,17 @@ class ManyModelsAndBatchSizeTypeModelTrainer:
         # Load classes
         self.class_names = myfuncs.load_python_object(self.config.class_names_path)
 
+    def fit_model(self, model, i, feature, target):
+        if isinstance(model, XGBClassifier):
+            if i == 0:
+                model.fit(feature, target)
+            else:
+                model.fit(feature, target, xgb_model=model.get_booster())
+
+            return
+
+        model.fit(feature, target)
+
     def train_on_batches(self, model):
         list_train_scoring = []
         for i in range(0, self.num_batch):
@@ -59,7 +70,7 @@ class ManyModelsAndBatchSizeTypeModelTrainer:
                 )
             )
 
-            model.fit(feature_batch, target_batch)
+            self.fit_model(model, i, feature_batch, target_batch)
 
             train_scoring = myfuncs.evaluate_model_on_one_scoring_17(
                 model,
