@@ -121,17 +121,9 @@ class DataTransformation:
             self.config.feature_ordinal_dict_path
         )
 
-        # TODO: d
-        print(f"feature_ordinal_dict: {self.feature_ordinal_dict}")
-        # d
-
         self.correction_transformer = myfuncs.load_python_object(
             self.config.correction_transformer_path
         )
-
-        # TODO: d
-        print(f"correction_transformer: {self.config.correction_transformer_path}")
-        # d
 
         self.df_val = myfuncs.load_python_object(self.config.val_data_path)
 
@@ -192,6 +184,8 @@ class DataTransformation:
                 df_train_feature, df_train_target
             )
 
+        print(f"Kích thước tập training: {df_train_feature.shape}")
+
         df_val_corrected = self.correction_transformer.transform(
             self.df_val, data_type="test"
         )
@@ -206,10 +200,6 @@ class DataTransformation:
                 "target"
             ].categories_[0]
         )
-
-        # TODO: d
-        print(f"class_names: {class_names}")
-        # d
 
         myfuncs.save_python_object(
             self.config.transformation_transformer_path, self.transformation_transformer
