@@ -18,7 +18,7 @@ data_transformation:
 # MODEL TRAINING  
 model_trainer: 
       model_name: model10_batch_50000    
-      model_training_type: mb  # rcv: randomisedcv, gcv: gridcv, r: randomisedTrainVal, g: gridTrainVal, m: many models
+      model_training_type: m  # rcv: randomisedcv, gcv: gridcv, r: randomisedTrainVal, g: gridTrainVal, m: many models
 
       # Cần cho model_training_type = rcv, gcv, r, g
       base_model: XGBClassifier(random_state=42)
