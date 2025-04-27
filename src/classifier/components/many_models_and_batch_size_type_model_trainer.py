@@ -57,9 +57,7 @@ class ManyModelsAndBatchSizeTypeModelTrainer:
             feature_batch = self.train_feature_data.iloc[
                 i : i + self.config.batch_size, :
             ]
-            target_batch = self.train_target_data.iloc[
-                i : i + self.config.batch_size, :
-            ]
+            target_batch = self.train_target_data.iloc[i : i + self.config.batch_size]
 
             # Lưu lại vào ổ đĩa
             myfuncs.save_python_object(
