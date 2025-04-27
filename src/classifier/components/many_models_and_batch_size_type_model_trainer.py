@@ -28,11 +28,8 @@ class ManyModelsAndBatchSizeTypeModelTrainer:
 
     def load_data_to_train(self):
         # Load các training data
-        self.train_feature_data = myfuncs.load_python_object(
-            self.config.train_feature_path
-        )
-        self.train_target_data = myfuncs.load_python_object(
-            self.config.train_target_path
+        self.num_batch = myfuncs.load_python_object(
+            os.path.join(self.config.data_transformation_path, "num_batch.pkl")
         )
         self.val_feature_data = myfuncs.load_python_object(self.config.val_feature_path)
         self.val_target_data = myfuncs.load_python_object(self.config.val_target_path)
@@ -48,35 +45,32 @@ class ManyModelsAndBatchSizeTypeModelTrainer:
         # Load classes
         self.class_names = myfuncs.load_python_object(self.config.class_names_path)
 
-        # Chia các training data thành từng batch size và lưu vào ổ đĩa, chứ không phải RAM
-        self.num_train_samples = self.train_feature_data.shape[0]
-
-        self.batches_folder = os.path.join(self.config.root_dir, "batches")
-        os.makedirs(self.batches_folder, exist_ok=True)
-        for i in range(0, self.num_train_samples, self.config.batch_size):
-            feature_batch = self.train_feature_data.iloc[
-                i : i + self.config.batch_size, :
-            ]
-            target_batch = self.train_target_data.iloc[i : i + self.config.batch_size]
-
-            # Lưu lại vào ổ đĩa
-            myfuncs.save_python_object(
-                os.path.join(self.batches_folder, f"feature_{i}.pkl"), feature_batch
-            )
-            myfuncs.save_python_object(
-                os.path.join(self.batches_folder, f"target_{i}.pkl"), target_batch
-            )
-
     def train_on_batches(self, model):
-        for i in range(0, self.num_train_samples, self.config.batch_size):
+        list_train_scoring = []
+        for i in range(0, self.num_batch):
             feature_batch = myfuncs.load_python_object(
-                os.path.join(self.batches_folder, f"feature_{i}.pkl")
+                os.path.join(
+                    self.config.data_transformation_path, f"train_features_{i}.pkl"
+                )
             )
             target_batch = myfuncs.load_python_object(
-                os.path.join(self.batches_folder, f"target_{i}.pkl")
+                os.path.join(
+                    self.config.data_transformation_path, f"train_target_{i}.pkl"
+                )
             )
 
             model.fit(feature_batch, target_batch)
+
+            train_scoring = myfuncs.evaluate_model_on_one_scoring_17(
+                model,
+                feature_batch,
+                target_batch,
+                self.config.scoring,
+            )
+
+            list_train_scoring.append(train_scoring)
+
+        return np.max(list_train_scoring)
 
     def train_model(self):
         print(
@@ -89,14 +83,8 @@ class ManyModelsAndBatchSizeTypeModelTrainer:
         print("Bắt đầu train model 0")
         first_model = self.models[0]
         start_time = time.time()
-        self.train_on_batches(first_model)
+        train_scoring = self.train_on_batches(first_model)
 
-        train_scoring = myfuncs.evaluate_model_on_one_scoring_17(
-            first_model,
-            self.train_feature_data,
-            self.train_target_data,
-            self.config.scoring,
-        )
         val_scoring = myfuncs.evaluate_model_on_one_scoring_17(
             first_model,
             self.val_feature_data,
@@ -126,13 +114,7 @@ class ManyModelsAndBatchSizeTypeModelTrainer:
         for index, model in enumerate(self.models[1:], 1):
             print(f"Bắt đầu train model {index}")
 
-            self.train_on_batches(model)
-            train_scoring = myfuncs.evaluate_model_on_one_scoring_17(
-                model,
-                self.train_feature_data,
-                self.train_target_data,
-                self.config.scoring,
-            )
+            train_scoring = self.train_on_batches(model)
             val_scoring = myfuncs.evaluate_model_on_one_scoring_17(
                 model,
                 self.val_feature_data,
@@ -181,7 +163,6 @@ class ManyModelsAndBatchSizeTypeModelTrainer:
                 model_desc = f"{model_desc} ***************"
             self.best_model_results_text += f"{model_desc}\n-> train scoring: {train_scoring}, val scoring: {val_scoring}\n\n"
 
-        self.best_model_results_text += f"batch size: {self.config.batch_size}\n"
         self.best_model_results_text += (
             f"Thời gian chạy trung bình cho 1 model: {self.true_average_train_time}\n"
         )
@@ -211,10 +192,10 @@ class ManyModelsAndBatchSizeTypeModelTrainer:
         # Các chỉ số khác bao gồm accuracy + classfication report + confusion matrix
         self.best_model_results_text += "====CÁC CHỈ SỐ KHÁC===========\n"
         best_model_results_text, train_confusion_matrix, val_confusion_matrix = (
-            myclasses.ClassifierEvaluator(
+            myclasses.TrainingBatchClassifierEvaluator(
                 model=self.best_model,
-                train_feature_data=self.train_feature_data,
-                train_target_data=self.train_target_data,
+                train_batch_folder_path = self.config.data_transformation_path,
+                num_batch = self.num_batch
                 val_feature_data=self.val_feature_data,
                 val_target_data=self.val_target_data,
                 class_names=self.class_names,

@@ -35,10 +35,14 @@ class DataTransformationConfig:
     do_smote: str
     list_after_feature_transformer: list
 
+    # params được suy ra
+    batch_size: int
+
 
 @dataclass(frozen=True)
 class ModelTrainerConfig:
     # config input
+    data_transformation_path: Path
     train_feature_path: Path
     train_target_path: Path
     val_feature_path: Path
@@ -65,11 +69,14 @@ class ModelTrainerConfig:
 
     # params to train many models + batch_size
     models_mb: list
-    batch_size: int
+    j: int
 
     # common params
     scoring: str
     target_score: float
+
+    # param được suy ra
+    do_run_on_batch: bool
 
 
 # TEST DATA CORRECTION

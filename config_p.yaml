@@ -32,6 +32,7 @@ data_transformation:
 # MODEL TRAINING
 model_trainer:
       # input
+      data_transformation_path: artifacts/data_transformation_${P}
       train_feature_path: artifacts/data_transformation_${P}/train_features.pkl
       train_target_path: artifacts/data_transformation_${P}/train_target.pkl
       val_feature_path: artifacts/data_transformation_${P}/val_features.pkl

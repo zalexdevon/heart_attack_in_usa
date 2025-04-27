@@ -46,6 +46,9 @@ class ConfigurationManager:
 
         create_directories([config.root_dir])
 
+        number = params.number
+        batch_size = int(number.split("_")[-1]) if "batch" in number else None
+
         data_transformation_config = DataTransformationConfig(
             # config input
             train_data_path=config.train_data_path,
@@ -63,6 +66,8 @@ class ConfigurationManager:
             # params
             do_smote=params.do_smote,
             list_after_feature_transformer=params.list_after_feature_transformer,
+            # params được suy ra
+            batch_size=batch_size,
         )
 
         return data_transformation_config
@@ -75,8 +80,12 @@ class ConfigurationManager:
 
         create_directories([config.root_dir])
 
+        name = params.model_name
+        do_run_on_batch = True if "batch" in name else False
+
         model_trainer_config = ModelTrainerConfig(
             # config input
+            data_transformation_path=config.data_transformation_path,
             train_feature_path=config.train_feature_path,
             train_target_path=config.train_target_path,
             val_feature_path=config.val_feature_path,
@@ -102,6 +111,8 @@ class ConfigurationManager:
             # common params
             scoring=self.params.scoring,
             target_score=self.params.target_score,
+            # param được suy ra
+            do_run_on_batch=do_run_on_batch,
         )
 
         return model_trainer_config

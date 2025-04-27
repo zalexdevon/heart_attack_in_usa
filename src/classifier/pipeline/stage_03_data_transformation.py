@@ -1,5 +1,6 @@
 from classifier.config.configuration import ConfigurationManager
 from classifier.components.data_transformation import DataTransformation
+from classifier.components.data_transformation_batch import DataTransformationBatch
 from classifier import logger
 from pathlib import Path
 import traceback
@@ -14,7 +15,13 @@ class DataTransformationPipeline:
     def main(self):
         config = ConfigurationManager()
         data_transformation_config = config.get_data_transformation_config()
-        data_transformation = DataTransformation(config=data_transformation_config)
+
+        if data_transformation_config is None:
+            data_transformation = DataTransformation(config=data_transformation_config)
+        else:
+            data_transformation = DataTransformationBatch(
+                config=data_transformation_config
+            )
 
         try:
             data_transformation.load_data()

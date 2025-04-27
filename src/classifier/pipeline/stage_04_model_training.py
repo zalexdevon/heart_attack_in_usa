@@ -28,9 +28,12 @@ class ModelTrainerPipeline:
 
         model_trainer = None
         if model_trainer_config.model_training_type == "m":
-            model_trainer = ManyModelsTypeModelTrainer(model_trainer_config)
-        elif model_trainer_config.model_training_type == "mb":
-            model_trainer = ManyModelsAndBatchSizeTypeModelTrainer(model_trainer_config)
+            if model_trainer_config.do_run_on_batch:
+                model_trainer = ManyModelsAndBatchSizeTypeModelTrainer(
+                    model_trainer_config
+                )
+            else:
+                model_trainer = ManyModelsTypeModelTrainer(model_trainer_config)
         else:
             model_trainer = ModelTrainer(model_trainer_config)
 
