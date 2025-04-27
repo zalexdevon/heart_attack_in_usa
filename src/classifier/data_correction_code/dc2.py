@@ -16,66 +16,55 @@ import re
 from sklearn.impute import SimpleImputer
 
 
-class DC2:
+class DC:
     def __init__(self):
         pass
 
     def transform(self, df, data_type):
-
         # TODO: d
-        print("Chạy vào đây nè ní ơi !!!!!!!!!!")
+        print("Chạy vào DC2 đây nè nhen man !!!!!")
         # d
 
         # Xóa các cột không cần thiết
         df = df.drop(
             columns=[
-                "country",
-                "location_name",
-                "latitude",
-                "longitude",
-                "timezone",
-                "last_updated_epoch",
-                "last_updated",
-                "temperature_celsius",
-                "temperature_fahrenheit",
-                "condition_text",
-                "wind_mph",
-                "wind_direction",
-                "pressure_mb",
-                "precip_mm",
-                "precip_in",
-                "feels_like_celsius",
-                "feels_like_fahrenheit",
-                "visibility_miles",
-                "gust_mph",
-                "air_quality_us-epa-index",
-                "air_quality_gb-defra-index",
-                "sunrise",
-                "sunset",
-                "moonrise",
-                "moonset",
+                "Ethnicity",
+                "EmploymentStatus",
+                "MaritalStatus",
+                "AlcoholConsumption",
+                "Residence",
+                "Diet",
+                "PhysicalActivity",
             ]
         )
 
         #  Đổi tên cột
         rename_dict = {
-            "wind_kph": "wind_kph_num",
-            "wind_degree": "wind_degree_num",
-            "pressure_in": "pressure_in_num",
-            "humidity": "humidity_num",
-            "cloud": "cloud_num",
-            "visibility_km": "visibility_km_num",
-            "uv_index": "uv_index_num",
-            "gust_kph": "gust_kph_num",
-            "air_quality_Carbon_Monoxide": "air_quality_Carbon_Monoxide_num",
-            "air_quality_Ozone": "air_quality_Ozone_num",
-            "air_quality_Nitrogen_dioxide": "air_quality_Nitrogen_dioxide_num",
-            "air_quality_Sulphur_dioxide": "air_quality_Sulphur_dioxide_num",
-            "air_quality_PM2.5": "air_quality_PM2_5_num",
-            "air_quality_PM10": "air_quality_PM10_num",
-            "moon_phase": "moon_phase_nom",
-            "moon_illumination": "moon_illumination_num",
-            "temp_bin": "temp_bin_target",
+            "Age": "Age_num",
+            "Gender": "Gender_nom",
+            "Cholesterol": "Cholesterol_num",
+            "BloodPressure": "BloodPressure_num",
+            "HeartRate": "HeartRate_num",
+            "BMI": "BMI_num",
+            "Smoker": "Smoker_bin",
+            "Diabetes": "Diabetes_bin",
+            "Hypertension": "Hypertension_bin",
+            "FamilyHistory": "FamilyHistory_bin",
+            "StressLevel": "StressLevel_numcat",
+            "Income": "Income_num",
+            "EducationLevel": "EducationLevel_ord",
+            "Medication": "Medication_bin",
+            "ChestPainType": "ChestPainType_nom",
+            "ECGResults": "ECGResults_nom",
+            "MaxHeartRate": "MaxHeartRate_num",
+            "ST_Depression": "ST_Depression_num",
+            "ExerciseInducedAngina": "ExerciseInducedAngina_bin",
+            "Slope": "Slope_nom",
+            "NumberOfMajorVessels": "NumberOfMajorVessels_numcat",
+            "Thalassemia": "Thalassemia_nom",
+            "PreviousHeartAttack": "PreviousHeartAttack_bin",
+            "StrokeHistory": "StrokeHistory_bin",
+            "Outcome": "Outcome_target",
         }
 
         df = df.rename(columns=rename_dict)
@@ -133,4 +122,14 @@ class DC2:
         return df
 
 
-FEATURE_ORDINAL_DICT_DC2 = {}
+FEATURE_ORDINAL_DICT = {
+    "Smoker_bin": [0, 1],
+    "Diabetes_bin": [0, 1],
+    "Hypertension_bin": [0, 1],
+    "FamilyHistory_bin": [0, 1],
+    "Medication_bin": ["No", "Yes"],
+    "ExerciseInducedAngina_bin": ["No", "Yes"],
+    "PreviousHeartAttack_bin": [0, 1],
+    "StrokeHistory_bin": [0, 1],
+    "EducationLevel_ord": ["High School", "College", "Postgraduate"],
+}
