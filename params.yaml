@@ -34,7 +34,7 @@ model_trainer:
 
       # Càn cho model_training_type = m
       models: 
-            - MLPClassifier(warm_start=True,hidden_layer_sizes=(64,32,16), activation='relu', max_iter=100, batch_size=1024, validation_fraction=0.1, early_stopping=True)
+            - MLPClassifier(warm_start=True,hidden_layer_sizes=(64;32;16), activation='relu', max_iter=100, batch_size=1024, validation_fraction=0.1, early_stopping=True)
 
                   
 # MODEL EVALUATION
