@@ -74,7 +74,7 @@ class ManyModelsAndBatchSizeTypeModelTrainer:
 
     def train_model(self):
         print(
-            f"\n========TIEN HANH TRAIN {self.num_models} MODELS với batch_size = {self.config.batch_size} !!!!!!================\n"
+            f"\n========TIEN HANH TRAIN {self.num_models} MODELS với số lượng batch = {self.num_batch} !!!!!!================\n"
         )
         self.train_scorings = []
         self.val_scorings = []
