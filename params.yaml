@@ -8,11 +8,11 @@ data_correction:
 
 # DATA TRANSFORMATION
 data_transformation: 
-      number: dt3    # id của data_transformation
+      number: dt5    # id của data_transformation
       do_smote: f # t: true, f: false
       list_after_feature_transformer:
             - PolynomialFeatures(degree=2, include_bias=False)
-            - PCA(n_components = 100)
+            - BatchRBFKernelPCA(n_components = 100, gamma=0.04, batch_size=50000)
 
 
 # MODEL TRAINING  
