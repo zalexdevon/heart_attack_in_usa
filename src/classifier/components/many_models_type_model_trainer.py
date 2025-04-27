@@ -30,12 +30,16 @@ class ManyModelsTypeModelTrainer:
         # Load các training data
         self.train_feature_data = myfuncs.load_python_object(
             self.config.train_feature_path
-        )
+        ).values
         self.train_target_data = myfuncs.load_python_object(
             self.config.train_target_path
-        )
-        self.val_feature_data = myfuncs.load_python_object(self.config.val_feature_path)
-        self.val_target_data = myfuncs.load_python_object(self.config.val_target_path)
+        ).values
+        self.val_feature_data = myfuncs.load_python_object(
+            self.config.val_feature_path
+        ).values
+        self.val_target_data = myfuncs.load_python_object(
+            self.config.val_target_path
+        ).values
 
         # Load models
         self.models = [
