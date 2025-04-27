@@ -34,8 +34,8 @@ model_trainer:
 
       # Càn cho model_training_type = m
       models: 
-            - XGBClassifier(warm_start=True, n_estimators=200, max_depth=30, reg_alpha=1, reg_lamda=1,  learning_rate = 0.01)
-            - XGBClassifier(warm_start=True, n_estimators=200, max_depth=30, reg_alpha=5, reg_lamda=5, learning_rate = 0.01)
+            - XGBClassifier(warm_start=True, n_estimators=200, max_depth=30, reg_alpha=1, reg_lambda=1,  learning_rate = 0.01)
+            - XGBClassifier(warm_start=True, n_estimators=200, max_depth=30, reg_alpha=5, reg_lambda=5, learning_rate = 0.01)
 
                   
 # MODEL EVALUATION
