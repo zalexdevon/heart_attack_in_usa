@@ -16,7 +16,7 @@ class DataTransformationPipeline:
         config = ConfigurationManager()
         data_transformation_config = config.get_data_transformation_config()
 
-        if data_transformation_config is None:
+        if data_transformation_config.batch_size is None:
             data_transformation = DataTransformation(config=data_transformation_config)
         else:
             data_transformation = DataTransformationBatch(
