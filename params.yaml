@@ -17,7 +17,7 @@ data_transformation:
 
 # MODEL TRAINING  
 model_trainer: 
-      model_name: model13    
+      model_name: model14    
       model_training_type: m  # rcv: randomisedcv, gcv: gridcv, r: randomisedTrainVal, g: gridTrainVal, m: many models
 
       # Cần cho model_training_type = rcv, gcv, r, g
@@ -34,8 +34,8 @@ model_trainer:
 
       # Càn cho model_training_type = m
       models: 
-            - MLPClassifier(hidden_layer_sizes=(128;64;32;16), activation='relu', max_iter=100, batch_size=1024, validation_fraction=0.1, early_stopping=True)
-            - MLPClassifier(hidden_layer_sizes=(128;64;32;16), activation='relu', max_iter=200, batch_size=4096, validation_fraction=0.1, early_stopping=True)
+            - MLPClassifier(hidden_layer_sizes=(128;64;32;16), activation='relu', max_iter=100, batch_size=1024)
+            - MLPClassifier(hidden_layer_sizes=(128;64;32;16), activation='relu', max_iter=200, batch_size=4096)
 
 
                   
