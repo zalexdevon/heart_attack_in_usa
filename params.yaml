@@ -12,7 +12,7 @@ data_transformation:
       do_smote: f # t: true, f: false
       list_after_feature_transformer:
             - PolynomialFeatures(degree=2, include_bias=False)
-            - BatchRBFKernelPCA(n_components = 100, gamma=0.04, batch_size=50000)
+            - BatchRBFKernelPCA(n_components = 100, gamma=0.04, batch_size=10000)
 
 
 # MODEL TRAINING  
