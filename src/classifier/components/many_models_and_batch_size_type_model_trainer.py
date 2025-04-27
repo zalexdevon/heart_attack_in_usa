@@ -48,24 +48,41 @@ class ManyModelsAndBatchSizeTypeModelTrainer:
         # Load classes
         self.class_names = myfuncs.load_python_object(self.config.class_names_path)
 
-        # Chia các training data thành từng batch size
-        num_train_samples = self.train_feature_data.shape[0]
-        self.train_feature_batchs = [
-            self.train_feature_data.iloc[i : i + self.config.batch_size, :]
-            for i in range(0, num_train_samples, self.config.batch_size)
-        ]
-        self.train_target_batchs = [
-            self.train_target_data.iloc[i : i + self.config.batch_size, :]
-            for i in range(0, num_train_samples, self.config.batch_size)
-        ]
+        # Chia các training data thành từng batch size và lưu vào ổ đĩa, chứ không phải RAM
+        self.num_train_samples = self.train_feature_data.shape[0]
+
+        self.batches_folder = os.path.join(self.config.root_dir, "batches")
+        os.makedirs(self.batches_folder)
+        for i in range(0, self.num_train_samples, self.config.batch_size):
+            feature_batch = self.train_feature_data.iloc[
+                i : i + self.config.batch_size, :
+            ]
+            target_batch = self.train_target_data.iloc[
+                i : i + self.config.batch_size, :
+            ]
+
+            # Lưu lại vào ổ đĩa
+            myfuncs.save_python_object(
+                os.path.join(self.batches_folder, f"feature_{i}.pkl"), feature_batch
+            )
+            myfuncs.save_python_object(
+                os.path.join(self.batches_folder, f"target_{i}.pkl"), target_batch
+            )
 
     def train_on_batches(self, model):
-        for feature, target in zip(self.train_feature_batchs, self.train_target_batchs):
-            model.fit(feature, target)
+        for i in range(0, self.num_train_samples, self.config.batch_size):
+            feature_batch = myfuncs.load_python_object(
+                os.path.join(self.batches_folder, f"feature_{i}.pkl")
+            )
+            target_batch = myfuncs.load_python_object(
+                os.path.join(self.batches_folder, f"target_{i}.pkl")
+            )
+
+            model.fit(feature_batch, target_batch)
 
     def train_model(self):
         print(
-            f"\n========TIEN HANH TRAIN {self.num_models} MODELS !!!!!!================\n"
+            f"\n========TIEN HANH TRAIN {self.num_models} MODELS với batch_size = {self.config.batch_size} !!!!!!================\n"
         )
         self.train_scorings = []
         self.val_scorings = []
