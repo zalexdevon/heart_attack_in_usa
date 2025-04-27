@@ -194,8 +194,8 @@ class ManyModelsAndBatchSizeTypeModelTrainer:
         best_model_results_text, train_confusion_matrix, val_confusion_matrix = (
             myclasses.TrainingBatchClassifierEvaluator(
                 model=self.best_model,
-                train_batch_folder_path = self.config.data_transformation_path,
-                num_batch = self.num_batch
+                train_batch_folder_path=self.config.data_transformation_path,
+                num_batch=self.num_batch,
                 val_feature_data=self.val_feature_data,
                 val_target_data=self.val_target_data,
                 class_names=self.class_names,
