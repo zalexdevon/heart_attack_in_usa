@@ -105,9 +105,6 @@ class ConfigurationManager:
             param_grid=params.param_grid,
             # params to train many models
             models=params.models,
-            # params to train many models + batch_size
-            models_mb=params.models_mb,
-            batch_size=params.batch_size,
             # common params
             scoring=self.params.scoring,
             target_score=self.params.target_score,
