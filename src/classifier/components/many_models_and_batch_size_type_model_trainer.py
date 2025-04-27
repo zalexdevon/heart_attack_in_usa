@@ -52,7 +52,7 @@ class ManyModelsAndBatchSizeTypeModelTrainer:
         self.num_train_samples = self.train_feature_data.shape[0]
 
         self.batches_folder = os.path.join(self.config.root_dir, "batches")
-        os.makedirs(self.batches_folder)
+        os.makedirs(self.batches_folder, exist_ok=True)
         for i in range(0, self.num_train_samples, self.config.batch_size):
             feature_batch = self.train_feature_data.iloc[
                 i : i + self.config.batch_size, :
