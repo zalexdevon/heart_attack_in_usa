@@ -1,45 +1,41 @@
 import pandas as pd
 import os
-from classifier import logger
-from sklearn.linear_model import LogisticRegression
-from sklearn.model_selection import RandomizedSearchCV, PredefinedSplit, GridSearchCV
 from classifier.entity.config_entity import ModelTrainerConfig
 from Mylib import myfuncs
-from sklearn.svm import SVC, LinearSVC
-from sklearn.linear_model import SGDClassifier
-from sklearn.tree import DecisionTreeClassifier
-import numpy as np
-from xgboost import XGBClassifier
-from scipy.stats import randint
-import random
-from lightgbm import LGBMClassifier
-from sklearn.model_selection import ParameterSampler
-from sklearn import metrics
 from sklearn.base import clone
 import time
 from Mylib import myclasses
 from Mylib import stringToObjectConverter
-import timeit
+from concurrent.futures import ThreadPoolExecutor
+from lightgbm import LGBMClassifier
+from xgboost import XGBClassifier
 
 
-class ManyModelsTypeModelTrainer:
+def runInParallel(func, models):
+    output = []
+    indices = list(range(len(models)))
+    with ThreadPoolExecutor() as executor:
+        results = executor.map(func, models, indices)
+        output = list(results)
+
+    # TODO: d
+    print(f"Output của runInParallel: {output}")
+    # d
+
+    return output
+
+
+class ManyModelsBatchTypeModelTrainerMultithreading:
     def __init__(self, config: ModelTrainerConfig):
         self.config = config
 
     def load_data_to_train(self):
         # Load các training data
-        self.train_feature_data = myfuncs.load_python_object(
-            self.config.train_feature_path
-        ).values
-        self.train_target_data = myfuncs.load_python_object(
-            self.config.train_target_path
-        ).values
-        self.val_feature_data = myfuncs.load_python_object(
-            self.config.val_feature_path
-        ).values
-        self.val_target_data = myfuncs.load_python_object(
-            self.config.val_target_path
-        ).values
+        self.num_batch = myfuncs.load_python_object(
+            os.path.join(self.config.data_transformation_path, "num_batch.pkl")
+        )
+        self.val_feature_data = myfuncs.load_python_object(self.config.val_feature_path)
+        self.val_target_data = myfuncs.load_python_object(self.config.val_target_path)
 
         # Load models
         self.models = [
@@ -52,80 +48,90 @@ class ManyModelsTypeModelTrainer:
         # Load classes
         self.class_names = myfuncs.load_python_object(self.config.class_names_path)
 
-    def train_model(self):
-        print(
-            f"\n========TIEN HANH TRAIN {self.num_models} MODELS !!!!!!================\n"
-        )
-        self.train_scorings = []
-        self.val_scorings = []
+    def fit_model(self, model, i, feature, target):
+        if isinstance(model, XGBClassifier):
+            if i == 0:
+                model.fit(feature, target)
+            else:
+                model.fit(feature, target, xgb_model=model.get_booster())
 
-        # Train model đầu tiên và get thời gian chạy ước tính
-        print("Bắt đầu train model 0")
-        first_model = self.models[0]
-        start_time = time.time()
-        first_model.fit(self.train_feature_data, self.train_target_data)
+            return
 
-        train_scoring = myfuncs.evaluate_model_on_one_scoring_17(
-            first_model,
-            self.train_feature_data,
-            self.train_target_data,
-            self.config.scoring,
-        )
+        if isinstance(model, LGBMClassifier):
+            if i == 0:
+                model.fit(feature, target)
+            else:
+                model.fit(feature, target, init_model=model.booster_)
+
+            return
+
+        model.fit(feature, target)
+
+    def train_on_batches(self, model):
+        list_train_scoring = []
+        for i in range(0, self.num_batch):
+            feature_batch = myfuncs.load_python_object(
+                os.path.join(
+                    self.config.data_transformation_path, f"train_features_{i}.pkl"
+                )
+            )
+            target_batch = myfuncs.load_python_object(
+                os.path.join(
+                    self.config.data_transformation_path, f"train_target_{i}.pkl"
+                )
+            )
+
+            self.fit_model(model, i, feature_batch, target_batch)
+
+            train_scoring = myfuncs.evaluate_model_on_one_scoring_17(
+                model,
+                feature_batch,
+                target_batch,
+                self.config.scoring,
+            )
+
+            list_train_scoring.append(train_scoring)
+
+        # TODO: d
+        print(f"\nCác train scorings là: {list_train_scoring}\n\n")
+        # d
+
+        return list_train_scoring[-1]  # Lấy kết quả trên batch cuối cùng
+
+    def train_1model(self, model, index):
+        train_scoring = self.train_on_batches(model)
         val_scoring = myfuncs.evaluate_model_on_one_scoring_17(
-            first_model,
+            model,
             self.val_feature_data,
             self.val_target_data,
             self.config.scoring,
         )
-        end_time = time.time()
 
         # In kết quả
         print(
-            f"Model 0 -> Train {self.config.scoring}: {train_scoring}, Val {self.config.scoring}: {val_scoring}\n"
+            f"Model {index} -> Train {self.config.scoring}: {train_scoring}, Val {self.config.scoring}: {val_scoring}\n"
         )
 
-        self.train_scorings.append(train_scoring)
-        self.val_scorings.append(val_scoring)
+        return train_scoring, val_scoring
 
-        self.average_training_time = (end_time - start_time) / 60
-        self.estimated_all_models_train_time = (
-            self.average_training_time * self.num_models
-        )
-
-        print(f"Thời gian trung bình chạy : {self.average_training_time} (min)")
+    def train_model(self):
         print(
-            f"Thời gian ước tính chạy còn lại: {self.estimated_all_models_train_time} (min)"
+            f"\n========TIEN HANH TRAIN {self.num_models} MODELS ĐA LUỒNG, SỐ lƯỢNG BATCH = {self.num_batch} !!!!!!================\n"
         )
+        start_time = time.time()
 
-        for index, model in enumerate(self.models[1:], 1):
-            print(f"Bắt đầu train model {index}")
+        scorings = runInParallel(self.train_1model, self.models)
 
-            model.fit(self.train_feature_data, self.train_target_data)
-            train_scoring = myfuncs.evaluate_model_on_one_scoring_17(
-                model,
-                self.train_feature_data,
-                self.train_target_data,
-                self.config.scoring,
-            )
-            val_scoring = myfuncs.evaluate_model_on_one_scoring_17(
-                model,
-                self.val_feature_data,
-                self.val_target_data,
-                self.config.scoring,
-            )
-
-            # In kết quả
-            print(
-                f"Model {index} -> Train {self.config.scoring}: {train_scoring}, Val {self.config.scoring}: {val_scoring}\n"
-            )
-
-            self.train_scorings.append(train_scoring)
-            self.val_scorings.append(val_scoring)
+        all_model_end_time = time.time()
 
         print(
             f"\n========KET THUC TRAIN {self.num_models} MODELS !!!!!!================\n"
         )
-        all_model_end_time = time.time()
+
+        self.train_scorings, self.val_scorings = zip(*scorings)
+        self.train_scorings = list(self.train_scorings)
+        self.val_scorings = list(self.val_scorings)
+
         self.true_all_models_train_time = (all_model_end_time - start_time) / 60
         self.true_average_train_time = self.true_all_models_train_time / self.num_models
 
@@ -184,10 +190,10 @@ class ManyModelsTypeModelTrainer:
         # Các chỉ số khác bao gồm accuracy + classfication report + confusion matrix
         self.best_model_results_text += "====CÁC CHỈ SỐ KHÁC===========\n"
         best_model_results_text, train_confusion_matrix, val_confusion_matrix = (
-            myclasses.ClassifierEvaluator(
+            myclasses.TrainingBatchClassifierEvaluator(
                 model=self.best_model,
-                train_feature_data=self.train_feature_data,
-                train_target_data=self.train_target_data,
+                train_batch_folder_path=self.config.data_transformation_path,
+                num_batch=self.num_batch,
                 val_feature_data=self.val_feature_data,
                 val_target_data=self.val_target_data,
                 class_names=self.class_names,

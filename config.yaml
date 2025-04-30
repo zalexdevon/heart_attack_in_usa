@@ -1,0 +1,42 @@
+artifacts_root: artifacts
+data_correction:
+  correction_transformer_path: artifacts/data_correction_dc1/transformer.pkl
+  data_path: artifacts/data_correction_dc1/data.pkl
+  feature_ordinal_dict_path: artifacts/data_correction_dc1/feature_ordinal_dict.pkl
+  root_dir: artifacts/data_correction_dc1
+  train_data_path: artifacts/data_ingestion/train_data.pkl
+data_transformation:
+  class_names_path: artifacts/data_transformation_dt3_batch_50000/class_names.pkl
+  correction_transformer_path: artifacts/data_correction_dc1/transformer.pkl
+  feature_ordinal_dict_path: artifacts/data_correction_dc1/feature_ordinal_dict.pkl
+  root_dir: artifacts/data_transformation_dt3_batch_50000
+  train_data_path: artifacts/data_correction_dc1/data.pkl
+  train_features_path: artifacts/data_transformation_dt3_batch_50000/train_features.pkl
+  train_target_path: artifacts/data_transformation_dt3_batch_50000/train_target.pkl
+  transformation_transformer_path: artifacts/data_transformation_dt3_batch_50000/transformer.pkl
+  val_data_path: artifacts/data_ingestion/val_data.pkl
+  val_features_path: artifacts/data_transformation_dt3_batch_50000/val_features.pkl
+  val_target_path: artifacts/data_transformation_dt3_batch_50000/val_target.pkl
+model_evaluation:
+  class_names_path: artifacts/data_correction/class_names.pkl
+  model_path: artifacts/model_trainer/XGB_12/best_model.pkl
+  preprocessor_path: artifacts/data_transformation_dt1/preprocessor.pkl
+  results_path: artifacts/model_evaluation/XGB_12/results.txt
+  root_dir: artifacts/model_evaluation/XGB_12
+  test_data_path: artifacts/test_data_correction/test_data.pkl
+model_trainer:
+  best_model_path: artifacts/model_trainer/model18_mt_batch_50000/best_model.pkl
+  class_names_path: artifacts/data_transformation_dt3_batch_50000/class_names.pkl
+  data_transformation_path: artifacts/data_transformation_dt3_batch_50000
+  list_monitor_components_path: artifacts/model_trainer/list_monitor_components.pkl
+  results_path: artifacts/model_trainer/model18_mt_batch_50000/results.txt
+  root_dir: artifacts/model_trainer/model18_mt_batch_50000
+  train_feature_path: artifacts/data_transformation_dt3_batch_50000/train_features.pkl
+  train_target_path: artifacts/data_transformation_dt3_batch_50000/train_target.pkl
+  val_feature_path: artifacts/data_transformation_dt3_batch_50000/val_features.pkl
+  val_target_path: artifacts/data_transformation_dt3_batch_50000/val_target.pkl
+test_data_correction:
+  preprocessor_path: artifacts/data_correction_dc1/preprocessor.pkl
+  root_dir: artifacts/test_data_correction
+  test_data_path: artifacts/test_data_correction/test_data.pkl
+  test_raw_data_path: artifacts/data_ingestion/test_data.pkl

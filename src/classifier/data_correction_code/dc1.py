@@ -1,18 +1,6 @@
 import pandas as pd
-from classifier.entity.config_entity import DataCorrectionConfig
 from Mylib import myfuncs
-from sklearn.preprocessing import (
-    OneHotEncoder,
-    StandardScaler,
-    MinMaxScaler,
-    OrdinalEncoder,
-)
 from sklearn.compose import ColumnTransformer
-from sklearn.pipeline import Pipeline
-from sklearn.base import BaseEstimator, TransformerMixin
-from imblearn.over_sampling import SMOTE
-from Mylib import stringToObjectConverter
-import re
 from sklearn.impute import SimpleImputer
 
 

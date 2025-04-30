@@ -31,6 +31,8 @@ class DataCorrection:
     def transform_data(self):
         df = self.transformer.transform(self.df, data_type="train")
 
+        print(f"Kích thước của tập là {df.shape}")
+
         myfuncs.save_python_object(self.config.data_path, df)
         myfuncs.save_python_object(
             self.config.feature_ordinal_dict_path, FEATURE_ORDINAL_DICT

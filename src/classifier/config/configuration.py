@@ -82,6 +82,7 @@ class ConfigurationManager:
 
         name = params.model_name
         do_run_on_batch = True if "batch" in name else False
+        do_run_with_multithreading = True if "mt" in name else False
 
         model_trainer_config = ModelTrainerConfig(
             # config input
@@ -110,6 +111,7 @@ class ConfigurationManager:
             target_score=self.params.target_score,
             # param được suy ra
             do_run_on_batch=do_run_on_batch,
+            do_run_with_multithreading=do_run_with_multithreading,
         )
 
         return model_trainer_config

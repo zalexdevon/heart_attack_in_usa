@@ -73,6 +73,7 @@ class ModelTrainerConfig:
 
     # param được suy ra
     do_run_on_batch: bool
+    do_run_with_multithreading: bool
 
 
 # TEST DATA CORRECTION

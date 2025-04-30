@@ -1,28 +1,29 @@
 import pandas as pd
 import os
-from classifier import logger
-from sklearn.linear_model import LogisticRegression
-from sklearn.model_selection import RandomizedSearchCV, PredefinedSplit, GridSearchCV
 from classifier.entity.config_entity import ModelTrainerConfig
 from Mylib import myfuncs
-from sklearn.svm import SVC, LinearSVC
-from sklearn.linear_model import SGDClassifier
-from sklearn.tree import DecisionTreeClassifier
-import numpy as np
-from xgboost import XGBClassifier
-from scipy.stats import randint
-import random
-from lightgbm import LGBMClassifier
-from sklearn.model_selection import ParameterSampler
-from sklearn import metrics
 from sklearn.base import clone
 import time
 from Mylib import myclasses
 from Mylib import stringToObjectConverter
-import timeit
+from concurrent.futures import ThreadPoolExecutor
 
 
-class ManyModelsTypeModelTrainer:
+def runInParallel(func, models):
+    output = []
+    indices = list(range(len(models)))
+    with ThreadPoolExecutor() as executor:
+        results = executor.map(func, models, indices)
+        output = list(results)
+
+    # TODO: d
+    print(f"Output của runInParallel: {output}")
+    # d
+
+    return output
+
+
+class ManyModelsTypeModelTrainerMultithreading:
     def __init__(self, config: ModelTrainerConfig):
         self.config = config
 
@@ -30,16 +31,12 @@ class ManyModelsTypeModelTrainer:
         # Load các training data
         self.train_feature_data = myfuncs.load_python_object(
             self.config.train_feature_path
-        ).values
+        )
         self.train_target_data = myfuncs.load_python_object(
             self.config.train_target_path
-        ).values
-        self.val_feature_data = myfuncs.load_python_object(
-            self.config.val_feature_path
-        ).values
-        self.val_target_data = myfuncs.load_python_object(
-            self.config.val_target_path
-        ).values
+        )
+        self.val_feature_data = myfuncs.load_python_object(self.config.val_feature_path)
+        self.val_target_data = myfuncs.load_python_object(self.config.val_target_path)
 
         # Load models
         self.models = [
@@ -52,80 +49,46 @@ class ManyModelsTypeModelTrainer:
         # Load classes
         self.class_names = myfuncs.load_python_object(self.config.class_names_path)
 
-    def train_model(self):
-        print(
-            f"\n========TIEN HANH TRAIN {self.num_models} MODELS !!!!!!================\n"
-        )
-        self.train_scorings = []
-        self.val_scorings = []
-
-        # Train model đầu tiên và get thời gian chạy ước tính
-        print("Bắt đầu train model 0")
-        first_model = self.models[0]
-        start_time = time.time()
-        first_model.fit(self.train_feature_data, self.train_target_data)
-
+    def train_1model(self, model, index):
+        model.fit(self.train_feature_data, self.train_target_data)
         train_scoring = myfuncs.evaluate_model_on_one_scoring_17(
-            first_model,
+            model,
             self.train_feature_data,
             self.train_target_data,
             self.config.scoring,
         )
         val_scoring = myfuncs.evaluate_model_on_one_scoring_17(
-            first_model,
+            model,
             self.val_feature_data,
             self.val_target_data,
             self.config.scoring,
         )
-        end_time = time.time()
 
         # In kết quả
         print(
-            f"Model 0 -> Train {self.config.scoring}: {train_scoring}, Val {self.config.scoring}: {val_scoring}\n"
+            f"Model {index} -> Train {self.config.scoring}: {train_scoring}, Val {self.config.scoring}: {val_scoring}\n"
         )
 
-        self.train_scorings.append(train_scoring)
-        self.val_scorings.append(val_scoring)
+        return train_scoring, val_scoring
 
-        self.average_training_time = (end_time - start_time) / 60
-        self.estimated_all_models_train_time = (
-            self.average_training_time * self.num_models
-        )
-
-        print(f"Thời gian trung bình chạy : {self.average_training_time} (min)")
+    def train_model(self):
         print(
-            f"Thời gian ước tính chạy còn lại: {self.estimated_all_models_train_time} (min)"
+            f"\n========TIEN HANH TRAIN {self.num_models} MODELS VỚI ĐA LUỒNG !!!!!!================\n"
         )
+        start_time = time.time()
 
-        for index, model in enumerate(self.models[1:], 1):
-            print(f"Bắt đầu train model {index}")
+        scorings = runInParallel(self.train_1model, self.models)
 
-            model.fit(self.train_feature_data, self.train_target_data)
-            train_scoring = myfuncs.evaluate_model_on_one_scoring_17(
-                model,
-                self.train_feature_data,
-                self.train_target_data,
-                self.config.scoring,
-            )
-            val_scoring = myfuncs.evaluate_model_on_one_scoring_17(
-                model,
-                self.val_feature_data,
-                self.val_target_data,
-                self.config.scoring,
-            )
-
-            # In kết quả
-            print(
-                f"Model {index} -> Train {self.config.scoring}: {train_scoring}, Val {self.config.scoring}: {val_scoring}\n"
-            )
-
-            self.train_scorings.append(train_scoring)
-            self.val_scorings.append(val_scoring)
+        all_model_end_time = time.time()
 
         print(
             f"\n========KET THUC TRAIN {self.num_models} MODELS !!!!!!================\n"
         )
-        all_model_end_time = time.time()
+
+        self.train_scorings, self.val_scorings = zip(*scorings)
+        self.train_scorings = list(self.train_scorings)
+        self.val_scorings = list(self.val_scorings)
+
         self.true_all_models_train_time = (all_model_end_time - start_time) / 60
         self.true_average_train_time = self.true_all_models_train_time / self.num_models
 

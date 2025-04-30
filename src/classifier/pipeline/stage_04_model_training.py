@@ -8,6 +8,12 @@ from classifier.components.many_models_type_model_trainer import (
 from classifier.components.many_models_and_batch_size_type_model_trainer import (
     ManyModelsAndBatchSizeTypeModelTrainer,
 )
+from classifier.components.many_models_type_model_trainer_multithreading import (
+    ManyModelsTypeModelTrainerMultithreading,
+)
+from classifier.components.many_models_batch_type_model_trainer_multithreading import (
+    ManyModelsBatchTypeModelTrainerMultithreading,
+)
 from classifier import logger
 from classifier.components.monitor_plotter import (
     MonitorPlotter,
@@ -28,8 +34,25 @@ class ModelTrainerPipeline:
 
         model_trainer = None
         if model_trainer_config.model_training_type == "m":
-            if model_trainer_config.do_run_on_batch:
+            if (
+                model_trainer_config.do_run_on_batch
+                and model_trainer_config.do_run_with_multithreading == False
+            ):
                 model_trainer = ManyModelsAndBatchSizeTypeModelTrainer(
+                    model_trainer_config
+                )
+            elif (
+                model_trainer_config.do_run_with_multithreading
+                and model_trainer_config.do_run_on_batch == False
+            ):
+                model_trainer = ManyModelsTypeModelTrainerMultithreading(
+                    model_trainer_config
+                )
+            elif (
+                model_trainer_config.do_run_on_batch
+                and model_trainer_config.do_run_with_multithreading
+            ):
+                model_trainer = ManyModelsBatchTypeModelTrainerMultithreading(
                     model_trainer_config
                 )
             else:

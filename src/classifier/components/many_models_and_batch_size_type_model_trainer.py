@@ -48,11 +48,25 @@ class ManyModelsAndBatchSizeTypeModelTrainer:
     def fit_model(self, model, i, feature, target):
         if isinstance(model, XGBClassifier):
             if i == 0:
+                # TODO: d
+                print("Chạy batch đầu tiên\n\n")
+                # d
                 model.fit(feature, target)
             else:
+                # TODO: d
+                print("Chạy với booster !!!!!!")
+                print(f"Booster: \n{model.get_booster()}\n\n")
+                # d
+
                 model.fit(feature, target, xgb_model=model.get_booster())
 
             return
+
+        if isinstance(model, LGBMClassifier):
+            if i == 0:
+                model.fit(feature, target)
+            else:
+                model.fit(feature, target, init_model=model.booster_)
 
         model.fit(feature, target)
 
@@ -81,7 +95,11 @@ class ManyModelsAndBatchSizeTypeModelTrainer:
 
             list_train_scoring.append(train_scoring)
 
-        return np.max(list_train_scoring)
+        # TODO: d
+        print(f"\nCác train scorings là: {list_train_scoring}\n\n")
+        # d
+
+        return list_train_scoring[-1]  # Lấy kết quả trên batch cuối cùng
 
     def train_model(self):
         print(
@@ -234,7 +252,7 @@ class ManyModelsAndBatchSizeTypeModelTrainer:
         )
 
         # Lưu chỉ số đánh giá vào file results.txt
-        with open(self.config.results_path, mode="w") as file:
+        with open(self.config.results_path, mode="w", encoding="utf-8") as file:
             file.write(self.best_model_results_text)
 
         # Lưu lại model tốt nhất
