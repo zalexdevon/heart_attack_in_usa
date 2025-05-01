@@ -9,6 +9,7 @@ data_correction:
 # DATA TRANSFORMATION
 data_transformation: 
       number: dt3_batch_50000            # id của data_transformation
+      data_correction_name: dc1
       do_smote: f # t: true, f: false
       list_after_feature_transformer:
             - PolynomialFeatures(degree=2, include_bias=False)
@@ -17,7 +18,9 @@ data_transformation:
 
 # MODEL TRAINING  
 model_trainer: 
-      model_name: model18_mt_batch_50000  # mt: multithreading
+      model_name: model20_batch_50000  # mt: multithreading
+      model_train_num: 0
+      data_transformation_name: dt3_batch_50000
       model_training_type: m  # rcv: randomisedcv, gcv: gridcv, r: randomisedTrainVal, g: gridTrainVal, m: many models
 
       # Cần cho model_training_type = rcv, gcv, r, g
@@ -34,8 +37,7 @@ model_trainer:
 
       # Càn cho model_training_type = m
       models: 
-            - XGBClassifier(n_estimators=300,max_depth=40)|0
-            - XGBClassifier(n_estimators=300,max_depth=40)|1
+            - XGBClassifier(n_estimators=200 ,max_depth=40)|0
 
 
 # MODEL EVALUATION ON TRAIN VAL

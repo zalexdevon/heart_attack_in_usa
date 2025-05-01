@@ -8,7 +8,11 @@ import yaml
 params = read_yaml(PARAMS_FILE_PATH)
 
 C = params.data_correction.name
+
+CP = params.data_transformation.data_correction_name
 P = params.data_transformation.number
+
+PT = params.model_trainer.data_transformation_name
 T = params.model_trainer.model_name
 
 PV = params.model_evaluation_on_train_val.data_transformation_number
@@ -22,6 +26,7 @@ E = params.model_evaluation.model_name
 replace_dict = {
     "${C}": C,
     "${P}": P,
+    "${PT}": PT,
     "${T}": T,
     "${PV}": PV,
     "${MV}": MV,
