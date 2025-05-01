@@ -41,24 +41,8 @@ class ModelTrainerPipeline:
                 model_trainer = ManyModelsAndBatchSizeTypeModelTrainer(
                     model_trainer_config
                 )
-            elif (
-                model_trainer_config.do_run_with_multithreading
-                and model_trainer_config.do_run_on_batch == False
-            ):
-                model_trainer = ManyModelsTypeModelTrainerMultithreading(
-                    model_trainer_config
-                )
-            elif (
-                model_trainer_config.do_run_on_batch
-                and model_trainer_config.do_run_with_multithreading
-            ):
-                model_trainer = ManyModelsBatchTypeModelTrainerMultithreading(
-                    model_trainer_config
-                )
             else:
                 model_trainer = ManyModelsTypeModelTrainer(model_trainer_config)
-        else:
-            model_trainer = ModelTrainer(model_trainer_config)
 
         try:
             model_trainer.load_data_to_train()
@@ -66,15 +50,6 @@ class ModelTrainerPipeline:
 
             model_trainer.train_model()
             print("\n===== Train data thành công ====== \n")
-
-            model_trainer.save_best_model_results()
-            print("\n===== Save kết quả đánh giá best model thành công ====== \n")
-
-            model_trainer.save_list_monitor_components()
-            monitor_plot_config = config.get_monitor_plot_config()
-            monitor_plot = MonitorPlotter(config=monitor_plot_config)
-            monitor_plot.plot(model_trainer.list_monitor_components)
-            print("\n===== Save kết quả các lần chạy model thành công ====== \n")
 
             print("================ NO ERORR :)))))))))) ==========================")
         except Exception as e:

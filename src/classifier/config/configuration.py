@@ -4,6 +4,7 @@ from classifier.entity.config_entity import (
     DataCorrectionConfig,
     DataTransformationConfig,
     ModelTrainerConfig,
+    ModeEvaluationOnTrainValDataConfig,
     ModelEvaluationConfig,
     MonitorPlotterConfig,
     TestDataCorrectionConfig,
@@ -20,7 +21,7 @@ class ConfigurationManager:
         self.config = read_yaml(config_filepath)
         self.params = read_yaml(params_filepath)
 
-        create_directories([self.config.artifacts_root])
+        create_directories([self.config.artifacts_root, self.config.plot_dir])
 
     def get_data_correction_config(self) -> DataCorrectionConfig:
         config = self.config.data_correction
@@ -91,12 +92,10 @@ class ConfigurationManager:
             train_target_path=config.train_target_path,
             val_feature_path=config.val_feature_path,
             val_target_path=config.val_target_path,
-            class_names_path=config.class_names_path,
             # config output
             root_dir=config.root_dir,
-            best_model_path=config.best_model_path,
-            results_path=config.results_path,
-            list_monitor_components_path=config.list_monitor_components_path,
+            # config common
+            plot_dir=self.config.plot_dir,
             # params
             model_name=params.model_name,
             model_training_type=params.model_training_type,
@@ -115,6 +114,25 @@ class ConfigurationManager:
         )
 
         return model_trainer_config
+
+    # MODEL EVALUATION ON TRAIN VAL
+    def get_model_evaluation_on_train_val_config(
+        self,
+    ) -> ModeEvaluationOnTrainValDataConfig:
+        config = self.config.model_trainer
+        params = self.params.model_trainer
+
+        create_directories([config.root_dir])
+
+        obj = ModeEvaluationOnTrainValDataConfig(
+            # config input
+            data_transformation_path=config.data_transformation_path,
+            model_path=config.model_path,
+            # config output
+            root_dir=config.root_dir,
+        )
+
+        return obj
 
     # TEST DATA CORRECTION
     def get_test_data_correction_config(self) -> TestDataCorrectionConfig:
@@ -155,14 +173,13 @@ class ConfigurationManager:
         return obj
 
     def get_monitor_plot_config(self) -> MonitorPlotterConfig:
-        config = self.params.monitor_plotter
+        params = self.params.monitor_plotter
 
         obj = MonitorPlotterConfig(
-            monitor_plot_html_path=config.monitor_plot_html_path,
-            monitor_plot_fig_path=config.monitor_plot_fig_path,
-            target_val_value=config.target_val_value,
-            max_val_value=config.max_val_value,
-            dtick_y_value=config.dtick_y_value,
+            plot_dir=self.config.plot_dir,
+            target_val_value=params.target_val_value,
+            max_val_value=params.max_val_value,
+            dtick_y_value=params.dtick_y_value,
         )
 
         return obj

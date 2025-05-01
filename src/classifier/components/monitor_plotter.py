@@ -11,10 +11,20 @@ class MonitorPlotter:
     def __init__(self, config: MonitorPlotterConfig):
         self.config = config
 
-    def plot(self, monitor):
-        model_names = [item[0] for item in monitor]
-        train_scores = [item[1] for item in monitor]
-        val_scores = [item[2] for item in monitor]
+    def load_data(self):
+        self.plot_components = []
+
+        components_path = os.path.join(self.config.plot_dir, "components")
+        for component_file_path in os.listdir(components_path):
+            component = myfuncs.load_python_object(
+                os.path.join(components_path, component_file_path)
+            )
+            self.plot_components.append(component)
+
+    def plot(self):
+        model_names = [item[0] for item in self.plot_components]
+        train_scores = [item[1] for item in self.plot_components]
+        val_scores = [item[2] for item in self.plot_components]
 
         for i in range(len(train_scores)):
             if train_scores[i] > self.config.max_val_value:
@@ -23,6 +33,7 @@ class MonitorPlotter:
             if val_scores[i] > self.config.max_val_value:
                 val_scores[i] = self.config.max_val_value
 
+        # Vẽ biểu đồ
         df = pd.DataFrame(
             {
                 "x": model_names,
@@ -86,8 +97,11 @@ class MonitorPlotter:
             showlegend=False,
         )
 
+        # Lưu biểu đồ vào file .html
         fig.write_html(
-            self.config.monitor_plot_html_path, config={"displayModeBar": False}
+            os.path.join(self.config.plot_dir, "plot.html"),
+            config={"displayModeBar": False},
         )
 
-        myfuncs.save_python_object(self.config.monitor_plot_fig_path, fig)
+        # Lưu biểu đồ vào file .pkl
+        myfuncs.save_python_object(os.path.join(self.config.plot_dir, "plot.pkl"), fig)

@@ -1,5 +1,5 @@
 from classifier import logger
-from classifier.pipeline.stage_03_data_transformation import DataTransformationPipeline
+from classifier.pipeline.stage_data_transformation import DataTransformationPipeline
 from classifier.pipeline.stage_04_model_training_randomised import (
     ModelTrainerRandomisedTrainingPipeline,
 )
@@ -13,7 +13,7 @@ from classifier.pipeline.stage_04_model_training_grid_train_val import (
     ModelTrainerGridTrainvalTrainingPipeline,
 )
 
-from classifier.pipeline.stage_05_model_evaluation import (
+from classifier.pipeline.stage_model_evaluation import (
     ModelEvaluationPipeline,
 )
 

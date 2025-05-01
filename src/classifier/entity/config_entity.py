@@ -47,13 +47,12 @@ class ModelTrainerConfig:
     train_target_path: Path
     val_feature_path: Path
     val_target_path: Path
-    class_names_path: Path
 
     # config output
     root_dir: Path
-    best_model_path: Path
-    results_path: Path
-    list_monitor_components_path: Path
+
+    # config common
+    plot_dir: Path
 
     # params
     model_name: str
@@ -74,6 +73,16 @@ class ModelTrainerConfig:
     # param được suy ra
     do_run_on_batch: bool
     do_run_with_multithreading: bool
+
+
+@dataclass(frozen=True)
+class ModeEvaluationOnTrainValDataConfig:
+    # config input
+    data_transformation_path: Path
+    model_path: Path
+
+    # config output
+    root_dir: Path
 
 
 # TEST DATA CORRECTION
@@ -107,8 +116,7 @@ class ModelEvaluationConfig:
 
 @dataclass(frozen=True)
 class MonitorPlotterConfig:
-    monitor_plot_html_path: Path
-    monitor_plot_fig_path: Path
+    plot_dir: Path
     target_val_value: float
     max_val_value: float
     dtick_y_value: float

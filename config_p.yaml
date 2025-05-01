@@ -1,4 +1,5 @@
 artifacts_root: artifacts
+plot_dir: artifacts/plot
 
 
 # DATA CORRECTION
@@ -37,13 +38,18 @@ model_trainer:
       train_target_path: artifacts/data_transformation_${P}/train_target.pkl
       val_feature_path: artifacts/data_transformation_${P}/val_features.pkl
       val_target_path: artifacts/data_transformation_${P}/val_target.pkl
-      class_names_path: artifacts/data_transformation_${P}/class_names.pkl
 
       # output
       root_dir: artifacts/model_trainer/${T}
-      best_model_path: artifacts/model_trainer/${T}/best_model.pkl
-      results_path: artifacts/model_trainer/${T}/results.txt
-      list_monitor_components_path: artifacts/model_trainer/list_monitor_components.pkl
+
+# MODEL EVALUATION ON TRAIN VAL
+model_evaluation_on_train_val: 
+      # input 
+      data_transformation_path: artifacts/data_transformation_${PV}
+      model_path: artifacts/model_trainer/${MV}/${MIV}.pkl
+
+      # output 
+      root_dir: artifacts/model_evaluation_on_train_val/${MV}/${MIV}
 
 # TEST DATA CORRECTION 
 test_data_correction: 

@@ -10,6 +10,11 @@ params = read_yaml(PARAMS_FILE_PATH)
 C = params.data_correction.name
 P = params.data_transformation.number
 T = params.model_trainer.model_name
+
+PV = params.model_evaluation_on_train_val.data_transformation_number
+MV = params.model_evaluation_on_train_val.model_name
+MIV = params.model_evaluation_on_train_val.model_index
+
 CE = params.model_evaluation.data_correction_name
 PE = params.model_evaluation.data_transformation_no
 E = params.model_evaluation.model_name
@@ -18,6 +23,9 @@ replace_dict = {
     "${C}": C,
     "${P}": P,
     "${T}": T,
+    "${PV}": PV,
+    "${MV}": MV,
+    "${MIV}": MIV,
     "${CE}": CE,
     "${PE}": PE,
     "${E}": E,
