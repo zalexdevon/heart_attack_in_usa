@@ -19,7 +19,7 @@ data_transformation:
 # MODEL TRAINING  
 model_trainer: 
       model_name: model20_batch_50000  # mt: multithreading
-      model_train_num: 2
+      model_train_num: 3
       data_transformation_name: dt3_batch_50000
       model_training_type: m  # rcv: randomisedcv, gcv: gridcv, r: randomisedTrainVal, g: gridTrainVal, m: many models
 
@@ -37,8 +37,7 @@ model_trainer:
 
       # Càn cho model_training_type = m
       models: 
-            - LogisticRegression(C=1.0)|4
-            - LogisticRegression(C=2.0)|5
+            - XGBClassifier(n_estimators=200 ,max_depth=10)|0
 
 
 # MODEL EVALUATION ON TRAIN VAL
