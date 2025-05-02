@@ -65,7 +65,7 @@ class ManyModelsAndBatchSizeTypeModelTrainer:
             print(f"kích thước của train: {feature_batch.shape}")
             # d
 
-            myfuncs.fit_model(model, i, feature_batch, target_batch)
+            myfuncs.fit_model_incremental_53(model, i, feature_batch, target_batch)
 
             train_scoring = myfuncs.evaluate_model_on_one_scoring_17(
                 model,
