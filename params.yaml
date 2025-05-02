@@ -19,7 +19,7 @@ data_transformation:
 # MODEL TRAINING  
 model_trainer: 
       model_name: model20_batch_50000  # mt: multithreading
-      model_train_num: 36
+      model_train_num: 37
       data_transformation_name: dt3_batch_50000
       model_training_type: m  # rcv: randomisedcv, gcv: gridcv, r: randomisedTrainVal, g: gridTrainVal, m: many models
 
@@ -37,7 +37,12 @@ model_trainer:
 
       # Càn cho model_training_type = m
       models: 
-            - RandomForestClassifier(n_estimators=50, max_depth=5, warm_start=True)|12
+            - LogisticRegression(penalty='elasticnet', solver='saga', l1_ratio=0.5 ,C = 0.1, max_iter=1000, warm_start=True)|13
+            - SGDClassifier(loss='log_loss', alpha=10, max_iter=1000, penalty='l1', warm_start=True)|14
+            - RandomForestClassifier(n_estimators=100, max_depth=10, warm_start=True)|15
+            - ExtraTreesClassifier(n_estimators=100, max_depth=10, warm_start=True)|16
+            # - LGBMClassifier(n_estimators=100, max_depth=10)|17
+            # - XGBClassifier(n_estimators=100, max_depth=10)|18 
 
 
 # MODEL EVALUATION ON TRAIN VAL
