@@ -47,23 +47,6 @@ class ManyModelsAndBatchSizeTypeModelTrainer:
                 os.path.join(self.config.root_dir, f"{model_index}.pkl"), model
             )
 
-    def fit_model(self, model, i, feature, target):
-        if isinstance(model, XGBClassifier):
-            if i == 0:
-                model.fit(feature, target)
-            else:
-                model.fit(feature, target, xgb_model=model.get_booster())
-
-            return
-
-        if isinstance(model, LGBMClassifier):
-            if i == 0:
-                model.fit(feature, target)
-            else:
-                model.fit(feature, target, init_model=model.booster_)
-
-        model.fit(feature, target)
-
     def train_on_batches(self, model):
         list_train_scoring = []
         for i in range(0, self.num_batch):
@@ -82,7 +65,7 @@ class ManyModelsAndBatchSizeTypeModelTrainer:
             print(f"kích thước của train: {feature_batch.shape}")
             # d
 
-            self.fit_model(model, i, feature_batch, target_batch)
+            myfuncs.fit_model(model, i, feature_batch, target_batch)
 
             train_scoring = myfuncs.evaluate_model_on_one_scoring_17(
                 model,

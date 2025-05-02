@@ -13,5 +13,5 @@ xgboost
 lightgbm 
 imbalanced-learn
 scipy
-zzzz_mylib_23_4==0.49
+zzzz_mylib_23_4==0.50
 -e .
