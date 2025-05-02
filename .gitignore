@@ -175,6 +175,3 @@ cython_debug/
 data/
 artifacts/
 research/
-config.yaml
-dvc.lock
-dvc.yaml
