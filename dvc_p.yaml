@@ -5,14 +5,14 @@ stages:
                   - data_correction.name
 
       data_transformation:
-            cmd: python src/classifier/pipeline/stage_03_data_transformation.py
+            cmd: python src/classifier/pipeline/stage_data_transformation.py
             params:
                   - data_transformation.number
             outs:
                   - artifacts/data_transformation_${P}
 
       model_trainer:
-            cmd: python src/classifier/pipeline/stage_04_model_training.py
+            cmd: python src/classifier/pipeline/stage_model_training.py
             deps:
                   - artifacts/data_transformation_${P}
             params:
@@ -30,7 +30,7 @@ stages:
                   - artifacts/test_data_correction
 
       model_evaluation:
-            cmd: python src/classifier/pipeline/stage_05_model_evaluation.py
+            cmd: python src/classifier/pipeline/stage_model_evaluation.py
             deps: 
                   - artifacts/test_data_correction
             params:
