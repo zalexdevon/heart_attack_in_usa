@@ -105,6 +105,7 @@ class ManyModelsAndBatchSizeTypeModelTrainer:
 
             # TODO: d
             print("Đã load xong model")
+            print(f"Model: {model}")
             # d
 
             print(f"Bắt đầu train 1 model")
