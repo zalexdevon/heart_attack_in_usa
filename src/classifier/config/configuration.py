@@ -9,6 +9,7 @@ from classifier.entity.config_entity import (
     MonitorPlotterConfig,
     TestDataCorrectionConfig,
 )
+import os
 
 
 class ConfigurationManager:
@@ -21,7 +22,11 @@ class ConfigurationManager:
         self.config = read_yaml(config_filepath)
         self.params = read_yaml(params_filepath)
 
-        create_directories([self.config.artifacts_root, self.config.plot_dir])
+        plot_components_path = os.path.join(self.config.plot_dir, "components")
+
+        create_directories(
+            [self.config.artifacts_root, self.config.plot_dir, plot_components_path]
+        )
 
     def get_data_correction_config(self) -> DataCorrectionConfig:
         config = self.config.data_correction
