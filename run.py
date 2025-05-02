@@ -25,6 +25,7 @@ E = params.model_evaluation.model_name
 
 replace_dict = {
     "${C}": C,
+    "${CP}": CP,
     "${P}": P,
     "${PT}": PT,
     "${T}": T,
