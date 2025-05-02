@@ -17,7 +17,7 @@ T = params.model_trainer.model_name
 
 PV = params.model_evaluation_on_train_val.data_transformation_number
 MV = params.model_evaluation_on_train_val.model_name
-MIV = params.model_evaluation_on_train_val.model_index
+MIV = str(params.model_evaluation_on_train_val.model_index)
 
 CE = params.model_evaluation.data_correction_name
 PE = params.model_evaluation.data_transformation_no
