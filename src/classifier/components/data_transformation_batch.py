@@ -132,7 +132,7 @@ class DataTransformationBatch:
 
         # Load các transfomers
         self.list_after_feature_transformer = [
-            stringToObjectConverter.convert_complex_MLmodel_yaml_to_object(transformer)
+            stringToObjectConverter.convert_MLmodel_yaml_to_object(transformer)
             for transformer in self.config.list_after_feature_transformer
         ]
 
