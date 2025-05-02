@@ -19,7 +19,7 @@ data_transformation:
 # MODEL TRAINING  
 model_trainer: 
       model_name: model20_batch_50000  # mt: multithreading
-      model_train_num: 40
+      model_train_num: 41
       data_transformation_name: dt3_batch_50000
       model_training_type: m  # rcv: randomisedcv, gcv: gridcv, r: randomisedTrainVal, g: gridTrainVal, m: many models
 
@@ -37,7 +37,7 @@ model_trainer:
 
       # Càn cho model_training_type = m
       models: 
-            - LGBMClassifier(n_estimators=300, max_depth=40, reg_alpha=1, reg_lambda=1, learning_rate=0.01)|19
+            - ExtraTreesClassifier(n_estimators=100, max_depth=10, warm_start=True)|16
 
 
 
