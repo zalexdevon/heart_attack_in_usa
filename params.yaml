@@ -19,7 +19,7 @@ data_transformation:
 # MODEL TRAINING  
 model_trainer: 
       model_name: model20_batch_50000  # mt: multithreading
-      model_train_num: 20
+      model_train_num: 21
       data_transformation_name: dt3_batch_50000
       model_training_type: m  # rcv: randomisedcv, gcv: gridcv, r: randomisedTrainVal, g: gridTrainVal, m: many models
 
@@ -39,8 +39,8 @@ model_trainer:
       models: 
             # - XGBClassifier(n_estimators=100 ,max_depth=50)|0
             # - XGBClassifier(n_estimators=100 ,max_depth=10)|1
-            - XGBClassifier(n_estimators=100 ,max_depth=20)|2
-            # - XGBClassifier(n_estimators=100 ,max_depth=30)|3
+            # - XGBClassifier(n_estimators=100 ,max_depth=20)|2
+            - XGBClassifier(n_estimators=100 ,max_depth=30)|3
             # - XGBClassifier(n_estimators=100 ,max_depth=40)|4
 
 
