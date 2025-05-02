@@ -103,6 +103,10 @@ class ManyModelsAndBatchSizeTypeModelTrainer:
                 os.path.join(self.config.root_dir, f"{model_index}.pkl")
             )
 
+            # TODO: d
+            print("Đã load xong model")
+            # d
+
             print(f"Bắt đầu train 1 model")
             train_scoring = self.train_on_batches(model)
             print(f"Kết thúc train 1 model")
