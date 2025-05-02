@@ -19,7 +19,7 @@ data_transformation:
 # MODEL TRAINING  
 model_trainer: 
       model_name: model20_batch_50000  # mt: multithreading
-      model_train_num: 33
+      model_train_num: 34
       data_transformation_name: dt3_batch_50000
       model_training_type: m  # rcv: randomisedcv, gcv: gridcv, r: randomisedTrainVal, g: gridTrainVal, m: many models
 
@@ -37,7 +37,7 @@ model_trainer:
 
       # Càn cho model_training_type = m
       models: 
-            - RandomForestClassifier(n_estimators=10, max_depth=5, warm_start=True)|10
+            - RandomForestClassifier(n_estimators=100, max_depth=10, warm_start=True)|10
 
 
 # MODEL EVALUATION ON TRAIN VAL
